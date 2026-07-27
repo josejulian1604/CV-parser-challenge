@@ -32,7 +32,9 @@ Status legend: [ ] pending · [~] in progress · [x] done
 - [ ] 3.3 Rate limit + daily budget (Redis) — Stage 3 complete
 - [ ] 3.4 Haiku→Sonnet router (Stage 7)
 - [ ] 3.5 Review/edit flow for extracted fields
-- [ ] 3.6 Evaluation harness (golden set + metrics)
+- [ ] 3.6a Curate golden set — manual, outside Claude Code sessions,
+      see testing.md
+- [ ] 3.6b Build eval harness script (run-eval.ts) — delegable
 - [ ] 3.7 Unit tests mirroring lib/extraction
 > Checkpoint: every bonus point in the brief is covered.
 
