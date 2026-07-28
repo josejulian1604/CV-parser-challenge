@@ -1,0 +1,253 @@
+{
+  "contact": {
+    "fullName": "Renata Solórzano Vega",
+    "email": "renata.solorzano@example.com",
+    "phone": "+506-6014-8823",
+    "location": "Cartago, Costa Rica",
+    "linkedin": "https://linkedin.com/in/renata-solorzano",
+    "github": null,
+    "website": "https://renatasolorzano.example.com"
+  },
+  "summary": "Product marketing leader with 8+ years driving go-to-market strategy for B2B SaaS products across Latin America. Skilled at translating complex technical capabilities into positioning that resonates with enterprise buyers, and at building cross-functional alignment between product, sales, and marketing teams to hit adoption and revenue targets.",
+  "experience": [
+    {
+      "company": "Nortek Cloud Solutions",
+      "title": "Senior Product Marketing Manager",
+      "location": "Remote (HQ: Austin, TX)",
+      "dateRange": {
+        "start": {
+          "year": 2022,
+          "month": null,
+          "raw": "2022"
+        },
+        "end": null,
+        "isCurrent": true
+      },
+      "bullets": [
+        "Led go-to-market strategy for three product lines generating $14M ARR combined, coordinating launch timelines across product, sales enablement, and demand generation.",
+        "Repositioned the core platform's messaging after a competitive audit, contributing to a 22% increase in qualified pipeline within two quarters.",
+        "Built and mentored a team of three marketing associates, establishing a shared OKR framework tied to pipeline and retention metrics.",
+        "Partnered with the product team to prioritize the roadmap based on win/loss analysis and customer advisory board feedback.",
+        "Directed a rebrand of the company's flagship product line, aligning visual identity and messaging across web, sales collateral, and product UI."
+      ]
+    },
+    {
+      "company": "Bridgeline Analytics",
+      "title": "Product Marketing Manager",
+      "location": "San José, Costa Rica",
+      "dateRange": {
+        "start": {
+          "year": 2020,
+          "month": null,
+          "raw": "2020"
+        },
+        "end": {
+          "year": 2022,
+          "month": null,
+          "raw": "2022"
+        },
+        "isCurrent": false
+      },
+      "bullets": [
+        "Owned positioning and launch execution for a new analytics module, achieving 40% adoption among existing customers within six months of release.",
+        "Designed and ran a quarterly competitive intelligence program, briefing sales leadership monthly on shifts in the competitive landscape.",
+        "Created a library of ROI calculators and case studies that shortened average sales cycle length by two weeks.",
+        "Collaborated with regional sales teams across four countries to localize messaging for distinct buyer personas."
+      ]
+    },
+    {
+      "company": "Vantage Retail Group",
+      "title": "Marketing Analyst",
+      "location": "San José, Costa Rica",
+      "dateRange": {
+        "start": {
+          "year": 2017,
+          "month": null,
+          "raw": "2017"
+        },
+        "end": {
+          "year": 2020,
+          "month": null,
+          "raw": "2020"
+        },
+        "isCurrent": false
+      },
+      "bullets": [
+        "Built weekly and monthly dashboards in Tableau tracking campaign performance across paid, organic, and lifecycle channels.",
+        "Ran A/B tests on email lifecycle campaigns, improving click-through rate by 18% over one year.",
+        "Supported regional expansion research for entry into two new Central American markets.",
+        "Coordinated with the design team to produce seasonal campaign assets across five channels."
+      ]
+    },
+    {
+      "company": "Alba Consumer Goods",
+      "title": "Marketing Intern",
+      "location": "Heredia, Costa Rica",
+      "dateRange": {
+        "start": {
+          "year": 2016,
+          "month": null,
+          "raw": "2016"
+        },
+        "end": {
+          "year": 2017,
+          "month": null,
+          "raw": "2017"
+        },
+        "isCurrent": false
+      },
+      "bullets": [
+        "Assisted with social media content calendars and basic performance reporting for three consumer brands.",
+        "Compiled competitor pricing and promotion trackers used in quarterly planning meetings."
+      ]
+    },
+    {
+      "company": "Café Altura Cooperativa",
+      "title": "Marketing Coordinator (Part-time)",
+      "location": "Turrialba, Costa Rica",
+      "dateRange": {
+        "start": {
+          "year": 2015,
+          "month": null,
+          "raw": "2015"
+        },
+        "end": {
+          "year": 2016,
+          "month": null,
+          "raw": "2016"
+        },
+        "isCurrent": false
+      },
+      "bullets": [
+        "Supported the cooperative's first e-commerce launch, coordinating product photography, copywriting, and a soft-launch email campaign to existing members.",
+        "Helped translate marketing materials into English for the cooperative's first export-focused trade show appearance."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Universidad de Costa Rica (UCR)",
+      "degree": "Bachelor's Degree",
+      "fieldOfStudy": "Business Administration, emphasis in Marketing",
+      "dateRange": {
+        "start": {
+          "year": 2013,
+          "month": null,
+          "raw": "2013"
+        },
+        "end": {
+          "year": 2017,
+          "month": null,
+          "raw": "2017"
+        },
+        "isCurrent": false
+      }
+    },
+    {
+      "institution": "INCAE Business School",
+      "degree": "Executive Program",
+      "fieldOfStudy": "Digital Marketing Strategy",
+      "dateRange": {
+        "start": {
+          "year": 2021,
+          "month": null,
+          "raw": "2021"
+        },
+        "end": {
+          "year": 2021,
+          "month": null,
+          "raw": "2021"
+        },
+        "isCurrent": false
+      }
+    }
+  ],
+  "skills": [
+    "Go-to-Market Strategy",
+    "Brand Positioning",
+    "Marketing Analytics (GA4, Mixpanel)",
+    "A/B Testing & Experimentation",
+    "SQL",
+    "Tableau",
+    "Salesforce Marketing Cloud",
+    "Cross-functional Leadership",
+    "Budget Management",
+    "Content Strategy",
+    "Competitive Research",
+    "Spanish (Native)",
+    "English (C1)",
+    "Portuguese (B1)"
+  ],
+  "additionalSections": [
+    {
+      "title": "Projects",
+      "items": [
+        "Voz Local – Community Podcast Network (2023–Present): Co-founded a volunteer-run podcast network amplifying small businesses in rural Costa Rica; grew listenership to 12,000 monthly downloads across four shows and coordinated sponsorships covering production costs.",
+        "Marketing Mentorship Circle (2021–Present): Designed a quarterly mentorship curriculum for early-career marketers at a local nonprofit, pairing 15+ mentees with industry professionals.",
+        "Internal Analytics Playbook (2019): Authored a company-wide playbook standardizing campaign KPI reporting, later adopted by two sister business units."
+      ]
+    },
+    {
+      "title": "Certifications",
+      "items": [
+        "Google Analytics 4 Certification (2024)",
+        "HubSpot Inbound Marketing (2023)",
+        "Product Marketing Certified (Pragmatic Institute) (2022)"
+      ]
+    },
+    {
+      "title": "Extracurricular Activities",
+      "items": [
+        "Board Member – Asociación de Mercadeo de Costa Rica (2023–Present)",
+        "Trail Running Ambassador – Correcaminos CR (2019–Present)",
+        "Volunteer Judge – Startup Weekend San José (2018, 2020, 2022)"
+      ]
+    },
+    {
+      "title": "Awards & Recognition",
+      "items": [
+        "Marketing Leader of the Year – Nortek Cloud Solutions (2024)",
+        "Rising Star Award – Costa Rica Marketing Association (2021)",
+        "Best Case Study – INCAE Executive Program (2021)"
+      ]
+    },
+    {
+      "title": "Speaking & Publications",
+      "items": [
+        "Panelist – SaaS Growth Summit LatAm (2023, 2024)",
+        "Guest Author – Marketing Hoy (2022–Present)"
+      ]
+    },
+    {
+      "title": "Professional Development",
+      "items": [
+        "Completed a 12-week B2B pricing strategy course through Reforge.",
+        "Attended SaaStr Europa conference (2022, 2023).",
+        "Participated in a cross-company benchmarking cohort of LatAm product marketing leaders."
+      ]
+    },
+    {
+      "title": "Volunteer Experience",
+      "items": [
+        "Marketing Advisor – Fundación Semillas de Café (2020–Present)",
+        "Mentor – Girls in Tech Costa Rica (2019–2021)"
+      ]
+    },
+    {
+      "title": "Interests",
+      "items": [
+        "Trail running",
+        "Ceramics",
+        "Specialty coffee roasting",
+        "Community radio production"
+      ]
+    },
+    {
+      "title": "References",
+      "items": [
+        "Available upon request."
+      ]
+    }
+  ],
+  "detectedLanguage": "en"
+}

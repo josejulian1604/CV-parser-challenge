@@ -7,11 +7,11 @@ Status legend: [ ] pending · [~] in progress · [x] done
 - [x] 0.2 Scaffold folder structure per architecture.md
 - [x] 0.3 Init Next.js 15 + TS + Tailwind, base configuration
 - [x] 0.4 Empty deploy to Vercel, public URL verified
-- [ ] 0.5 GitHub Actions CI: typecheck + lint
+- [x] 0.5 GitHub Actions CI: typecheck + lint
 > Checkpoint: the public URL exists and responds. Commit.
 
 ## Phase 1 — Required core, happy path (text-based PDF only)
-- [ ] 1.1 ResumeDataSchema + PartialDateSchema (Zod)
+- [x] 1.1 ResumeDataSchema + PartialDateSchema (Zod)
 - [ ] 1.2 PDF adapter (Stages 1-2) with offset↔bbox linking
 - [ ] 1.3 Route handler + Anthropic provider (Stage 4, no router yet)
 - [ ] 1.4 Validation + repair (Stage 5)

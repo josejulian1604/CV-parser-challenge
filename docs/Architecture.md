@@ -93,13 +93,15 @@ reading the code, not a claim made in the README.
    validation failure). Regex-only extraction of email, phone,
    LinkedIn/GitHub URLs, best-effort name from the first lines.
    Returns a partial result with a degraded flag — the screen must
-   never be blank.
+   never be blank; this is an explicit functional requirement from
+   the challenge brief.
 
 ## Provider abstraction (`structure/provider.ts`)
 An `LLMProvider` interface with an Anthropic implementation and a
 fallback (e.g. Gemini Flash free tier). If Anthropic credits run out
 mid-week, switching providers is a config change, not a rewrite. This
-exists because availability is fundamental.
+exists because the deployed app being reachable is the one
+non-negotiable requirement in the brief's submission rules.
 
 ## Grounded schema — two schemas, two moments
 `ResumeDataSchema` (what the LLM returns, stage 4-5) is intentionally
@@ -125,7 +127,8 @@ offset 1420", not "search for this string somewhere".
 ## Known limitation: two-column PDFs
 Naive text reconstruction (grouping by y-band, then sorting by x)
 breaks reading order on two-column layouts — text interleaves and
-reads incoherently. Acceptable for this scope; documented explicitly in the README
+reads incoherently. Acceptable for this scope (the brief does not
+require handling every layout); documented explicitly in the README
 under "known limitations," not silently swept under the rug.
 
 ## Known limitation: scanned CVs have no visual highlight
@@ -177,6 +180,25 @@ page image. This is a different behavior, not a bug.
     tests/
       unit/                    # mirrors lib/extraction/ 1:1
       e2e/
+      fixtures/                # small per-stage test inputs, NOT the
+        pdf/                     eval golden set — e.g. 2-3 PDFs used
+                                  by adapters/pdf.test.ts. No sidecar
+                                  JSON: known-correct values (reading-
+                                  order substring checks via
+                                  expectInOrder, page count, block
+                                  count lower bounds) are authored
+                                  once by a human who opened the file
+                                  and written inline in the test file
+                                  next to the fixture they check,
+                                  rather than in a separate
+                                  `<name>.expected.json`. Revisit this
+                                  if a future adapter's fixtures
+                                  genuinely need the simpler
+                                  {textContains, pageCount,
+                                  headingCount} sidecar shape instead
+                                  — e.g. many fixtures sharing one
+                                  assertion shape, where inline checks
+                                  would duplicate structure per file.
     docs/                    # this Context Pack
     PLAN.md
     CLAUDE.md

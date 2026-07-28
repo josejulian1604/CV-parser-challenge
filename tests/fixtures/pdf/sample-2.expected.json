@@ -1,0 +1,118 @@
+{
+  "contact": {
+    "fullName": "Marcela Vindas Solano",
+    "email": "marcela.vindas@example.com",
+    "phone": "+506-7012-4498",
+    "location": "Heredia, Costa Rica",
+    "linkedin": "https://linkedin.com/in/marcela-vindas-solano",
+    "github": "https://github.com/mvindas-dev",
+    "website": null
+  },
+  "summary": null,
+  "experience": [
+    {
+      "company": "Andes Manufacturing Corp.",
+      "title": "Mechanical Design Engineer",
+      "location": null,
+      "dateRange": {
+        "start": {
+          "year": 2023,
+          "month": null,
+          "raw": "2023"
+        },
+        "end": null,
+        "isCurrent": true
+      },
+      "bullets": [
+        "Designed and validated CAD models for injection-molded components, reducing prototype iteration cycles by streamlining tolerance stack-up analysis.",
+        "Led root-cause investigations for field failures, coordinating with suppliers to implement corrective actions that cut defect rates significantly.",
+        "Mentored two junior engineers on GD&T standards and DFM best practices."
+      ]
+    },
+    {
+      "company": "Rioverde Foods S.A.",
+      "title": "Quality Assurance Technician",
+      "location": null,
+      "dateRange": {
+        "start": {
+          "year": 2021,
+          "month": null,
+          "raw": "2021"
+        },
+        "end": {
+          "year": 2023,
+          "month": null,
+          "raw": "2023"
+        },
+        "isCurrent": false
+      },
+      "bullets": [
+        "Performed statistical process control audits across three production lines, flagging deviations before they reached shipment.",
+        "Developed a lightweight inspection checklist that shortened line changeover downtime."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Universidad de Costa Rica (UCR)",
+      "degree": "Bachelor's Degree",
+      "fieldOfStudy": "Mechanical Engineering",
+      "dateRange": {
+        "start": {
+          "year": 2016,
+          "month": null,
+          "raw": "2016"
+        },
+        "end": {
+          "year": 2021,
+          "month": null,
+          "raw": "2021"
+        },
+        "isCurrent": false
+      }
+    },
+    {
+      "institution": "Instituto Nacional de Aprendizaje (INA)",
+      "degree": "Technical Certification",
+      "fieldOfStudy": "Lean Manufacturing & Six Sigma Green Belt",
+      "dateRange": {
+        "start": {
+          "year": 2022,
+          "month": null,
+          "raw": "2022"
+        },
+        "end": {
+          "year": 2022,
+          "month": null,
+          "raw": "2022"
+        },
+        "isCurrent": false
+      }
+    }
+  ],
+  "skills": [
+    "SolidWorks",
+    "AutoCAD",
+    "GD&T",
+    "DFM/DFA",
+    "Minitab",
+    "Statistical Process Control",
+    "Six Sigma",
+    "Lean Manufacturing",
+    "ISO 9001",
+    "Root Cause Analysis",
+    "MS Project",
+    "Injection Molding",
+    "Supplier Quality Management"
+  ],
+  "additionalSections": [
+    {
+      "title": "Extracurricular Activities",
+      "items": [
+        "Volunteer Coordinator -- Ingeniería Sin Fronteras CR (2022 -- Present): Organized quarterly workshops teaching basic mechanical design to high school students in underserved communities.",
+        "Member -- Club de Ajedrez UCR (2017 -- 2021): Competed in inter-university tournaments; served as club treasurer for two years."
+      ]
+    }
+  ],
+  "detectedLanguage": "en"
+}

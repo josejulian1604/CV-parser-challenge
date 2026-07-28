@@ -11,19 +11,33 @@ roughly one module (one pipeline stage, one adapter, one component)
 per turn, per PLAN.md.
 
 ## Subagents defined for this project
-Two, deliberately kept minimal for a project this size:
+Two, defined as files in `.claude/agents/` (name, description, tools,
+model in frontmatter — see those files for the exact definitions):
 
-- **code-reviewer** — read-only tools only (no file writes). Invoked
-  after a module is implemented, before it's marked done in PLAN.md.
-  Checks the diff against docs/conventions.md and flags violations,
-  missed error paths, and Result-type misuse.
-- **test-writer** — write access limited to `tests/unit/**`. Invoked
-  after a module in `lib/extraction/**` is implemented and reviewed.
-  Writes the mirrored test file per the testing.md convention.
+- **code-reviewer** — read-only tools only (no file writes). Reserved
+  for higher-risk modules specifically: the PDF adapter's offset↔bbox
+  linking, grounding, escalation/router, validation/repair. Checks
+  the diff against docs/conventions.md and flags violations, missed
+  error paths, and Result-type misuse.
+- **test-writer** — write access limited to `tests/unit/**`. Also
+  reserved for the same higher-risk modules.
+
+For most modules (adapters, normalize, simple UI components), the
+main session writes both the implementation AND its mirrored tests
+directly in the same turn — formally invoking a subagent for every
+small module is unnecessary overhead for a project this size. Only
+escalate to the code-reviewer / test-writer subagents explicitly
+(by name, or @-mention) for the handful of modules where the extra
+scrutiny is worth the overhead.
 
 Design and documentation tasks are given directly to the main session
 as regular instructions — not worth formalizing as subagents at this
-scope. May be added later if time allows; not currently planned.
+scope.
+
+Regardless of who writes tests (main session or test-writer
+subagent), tests must actually be RUN and shown passing before a
+task is considered done — never accept "tests written" without seeing
+real pass/fail output.
 
 ## Git commit rules
 - Claude Code executes `git add` and `git commit` itself, but only

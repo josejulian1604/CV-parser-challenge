@@ -1,0 +1,124 @@
+{
+  "contact": {
+    "fullName": "José Julián Gutiérrez Badilla",
+    "email": "joseguba1604@gmail.com",
+    "phone": "+506-8726-6988",
+    "location": null,
+    "linkedin": "https://linkedin.com/in/jose-julian-gutierrez-badilla-8095a528a",
+    "github": "https://github.com/josejulian1604",
+    "website": null
+  },
+  "summary": "Software Engineering graduate from ITCR with hands-on experience building full-stack applications and end-to-end data pipelines using SQL, Python, AWS, and Power BI—from schema design and ETL to interactive dashboards and cloud infrastructure. I write maintainable, well-documented code and close skill gaps fast through self-directed projects.",
+  "experience": [
+    {
+      "company": "Monseñor Sanabria Hospital",
+      "title": "Software Engineer Intern — SIGAC: Integrated Scheduling & Consulting Room Management System",
+      "location": null,
+      "dateRange": {
+        "start": {
+          "year": 2025,
+          "month": null,
+          "raw": "2025"
+        },
+        "end": {
+          "year": 2025,
+          "month": null,
+          "raw": "2025"
+        },
+        "isCurrent": false
+      },
+      "bullets": [
+        "Designed relational database schemas and stored procedures in MySQL to enforce complex scheduling constraints across a public hospital's multi-department operations, ensuring data integrity under concurrent multi-user access.",
+        "Proactively built a statistics and reporting feature beyond the original project scope, giving stakeholders visibility into scheduling trends and resource utilization.",
+        "Gathered requirements directly from healthcare stakeholders, translating clinical workflows into technical solutions with role-based access control; built responsive interfaces with React, TypeScript, and Tailwind CSS.",
+        "Technologies: MySQL, SQL, React, TypeScript, Tailwind CSS, Figma"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Costa Rica Institute of Technology (ITCR)",
+      "degree": "Bachelor's Degree",
+      "fieldOfStudy": "Computer Engineering",
+      "dateRange": {
+        "start": {
+          "year": 2021,
+          "month": null,
+          "raw": "2021"
+        },
+        "end": {
+          "year": 2026,
+          "month": null,
+          "raw": "2026"
+        },
+        "isCurrent": false
+      }
+    },
+    {
+      "institution": "Codecademy",
+      "degree": "Full-Stack Engineer Certification",
+      "fieldOfStudy": "Agentic AI Development Bootcamp (AGAI-03)",
+      "dateRange": {
+        "start": {
+          "year": 2026,
+          "month": null,
+          "raw": "2026"
+        },
+        "end": null,
+        "isCurrent": true
+      }
+    }
+  ],
+  "skills": [
+    "Python",
+    "SQL",
+    "JavaScript",
+    "TypeScript",
+    "Java",
+    "Power BI",
+    "DAX",
+    "Power Query",
+    "Data Modeling (Star Schema)",
+    "ETL",
+    "scikit-learn",
+    "MySQL",
+    "PostgreSQL",
+    "MongoDB",
+    "AWS Lambda",
+    "DynamoDB",
+    "API Gateway",
+    "EventBridge",
+    "Terraform",
+    "Docker",
+    "Git",
+    "CI/CD",
+    "Node.js",
+    "Express",
+    "REST APIs",
+    "Anthropic Claude API",
+    "LangChain",
+    "RAG Pipelines",
+    "React",
+    "Tailwind CSS",
+    "HTML/CSS",
+    "Spanish (Native)",
+    "English (C1)"
+  ],
+  "additionalSections": [
+    {
+      "title": "Projects",
+      "items": [
+        "FinRisk Analytics – Financial Risk & Fraud Detection Dashboard (2026): Building an end-to-end analytics pipeline for simulated banking data using SQL, Python, Power BI, star schema modeling, DAX time-intelligence measures, and Anthropic Claude API for executive summaries.",
+        "Pulse – Personal News Briefing Application (2026): Architected a serverless AWS pipeline using Lambda, DynamoDB, API Gateway, EventBridge, Terraform, Node.js, TypeScript, and Anthropic Claude API. Implemented caching and unit/integration testing with Jest.",
+        "RAG Chatbot – Intelligent Q&A System (2026): Built a data ingestion and retrieval pipeline with web scraping, synthetic Q&A generation, vector embeddings, ChromaDB, LangChain, Streamlit, and Anthropic Claude API."
+      ]
+    },
+    {
+      "title": "Extracurricular Activities",
+      "items": [
+        "Finalist – Reto Marte (June 2025): Hackathon by Fidelitas – Innovation & Sustainability Challenge. Led a team of 5, driving technical proposals that reached the top 7 teams."
+      ]
+    }
+  ],
+  "detectedLanguage": "en"
+}
