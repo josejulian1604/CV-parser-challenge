@@ -3,10 +3,10 @@
 Status legend: [ ] pending · [~] in progress · [x] done
 
 ## Phase 0 — Skeleton (walking skeleton)
-- [ ] 0.1 Create root CLAUDE.md + docs/*.md (Context Packs) — manual, not delegated
-- [ ] 0.2 Scaffold folder structure per architecture.md
-- [ ] 0.3 Init Next.js 15 + TS + Tailwind, base configuration
-- [ ] 0.4 Empty deploy to Vercel, public URL verified
+- [x] 0.1 Create root CLAUDE.md + docs/*.md (Context Packs) — manual, not delegated
+- [x] 0.2 Scaffold folder structure per architecture.md
+- [x] 0.3 Init Next.js 15 + TS + Tailwind, base configuration
+- [x] 0.4 Empty deploy to Vercel, public URL verified
 - [ ] 0.5 GitHub Actions CI: typecheck + lint
 > Checkpoint: the public URL exists and responds. Commit.
 
