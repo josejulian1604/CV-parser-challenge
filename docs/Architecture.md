@@ -56,12 +56,30 @@ reading the code, not a claim made in the README.
    pages, max char count, both in `lib/config/limits.ts` as named
    constants, not magic numbers).
 4. **Structure** (`structure/structure.ts`) — server, paid. Single
-   call to Claude Haiku 4.5, temperature 0, structured output against
-   a JSON Schema derived from `ResumeDataSchema` via
-   `zod-to-json-schema`. System prompt (`structure/prompt.ts`, kept
-   versioned for the eval harness) instructs: never invent, use null
-   for missing fields. Prompt-cache the system prompt + schema block
-   (large, identical across calls).
+   call to Claude Haiku 4.5, temperature 0, against a JSON Schema
+   derived from `ResumeDataSchema` via Zod v4's native
+   `z.toJSONSchema()` (not the `zod-to-json-schema` package — it's
+   runtime-incompatible with Zod v4 and silently produces an empty
+   schema). System prompt (`structure/prompt.ts`, kept versioned for
+   the eval harness) instructs: never invent, use null for missing
+   fields. Prompt-cache the system prompt + schema block (large,
+   identical across calls).
+   **Documented trade-off:** the schema is embedded as prompt text,
+   not passed via `output_config.format`. Anthropic's schema compiler
+   caps total nullable/union-typed parameters at 16;
+   `ResumeDataSchema` exceeds that once nested schemas (e.g.
+   `DateRangeSchema`, reused by both `experience` and `education`) are
+   inlined per occurrence rather than shared — confirmed against the
+   real API (19 parameters, rejected). Weakening the schema's
+   deliberate "always null, never omit a key" design (see schema/
+   Stage 1 note) to fit under the cap was rejected in favor of
+   dropping API-enforced schema validation for this stage: structural
+   correctness now relies entirely on stage 5's
+   `ResumeDataSchema.safeParse()` + repair loop, not an API-level
+   guarantee. One consequence: without `output_config.format`, the
+   model is no longer constrained to emit bare JSON, so
+   `structure/provider.ts` defensively strips a leading/trailing
+   markdown code fence (a "json" fenced block) before parsing.
 5. **Validate & repair** (`validation/repair.ts`) — server, cheap.
    `ResumeDataSchema.safeParse()`. On failure, send the validation
    errors back to the SAME model (Haiku) for a format fix — schema

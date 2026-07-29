@@ -1,7 +1,8 @@
+---
 name: test-writer
 description: Writes unit tests mirroring lib/extraction/** into tests/unit/**, per docs/testing.md conventions. Use after a module is implemented and reviewed.
 tools: Read, Write, Edit, Bash, Glob, Grep
-model: sonnet 5
+model: sonnet
 ---
 You write unit tests for this project, mirroring the path of the
 module under test into tests/unit/. Follow docs/testing.md: prioritize

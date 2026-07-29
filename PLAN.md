@@ -12,9 +12,9 @@ Status legend: [ ] pending · [~] in progress · [x] done
 
 ## Phase 1 — Required core, happy path (text-based PDF only)
 - [x] 1.1 ResumeDataSchema + PartialDateSchema (Zod)
-- [ ] 1.2 PDF adapter (Stages 1-2) with offset↔bbox linking
-- [ ] 1.3 Route handler + Anthropic provider (Stage 4, no router yet)
-- [ ] 1.4 Validation + repair (Stage 5)
+- [x] 1.2 PDF adapter (Stages 1-2) with offset↔bbox linking
+- [x] 1.3 Route handler + Anthropic provider (Stage 4, no router yet)
+- [x] 1.4 Validation + repair (Stage 5)
 - [ ] 1.5 Minimal UI: upload + undesigned results table
 > Checkpoint: upload a real text-based PDF and see extracted data on screen.
 

@@ -1,103 +1,197 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import { classifyDocument } from "@/lib/extraction/adapters/classify";
+import { parsePdf } from "@/lib/extraction/adapters/pdf";
+import type { ResumeData } from "@/lib/extraction/schema/resume";
+
+type Status = "idle" | "loading" | "success" | "error";
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [file, setFile] = useState<File | null>(null);
+  const [status, setStatus] = useState<Status>("idle");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [resumeData, setResumeData] = useState<ResumeData | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setFile(e.target.files?.[0] ?? null);
+    setStatus("idle");
+    setErrorMessage(null);
+    setResumeData(null);
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!file) return;
+
+    setStatus("loading");
+    setErrorMessage(null);
+
+    const classified = await classifyDocument(file);
+    if (!classified.ok) {
+      if (classified.error.kind === "route_not_implemented") {
+        setErrorMessage(
+          "This file type isn't supported yet — only text-based PDFs work right now."
+        );
+      } else {
+        setErrorMessage("Extraction failed — please try a different file.");
+      }
+      setStatus("error");
+      return;
+    }
+
+    if (classified.value.route !== "pdf-with-text") {
+      // classifyDocument only returns ok:true for pdf-with-text today;
+      // kept as a defensive guard, not currently reachable.
+      setErrorMessage(
+        "This file type isn't supported yet — only text-based PDFs work right now."
+      );
+      setStatus("error");
+      return;
+    }
+
+    const parsed = await parsePdf(classified.value.file);
+    if (!parsed.ok) {
+      setErrorMessage("Extraction failed — please try a different file.");
+      setStatus("error");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/extract", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: parsed.value.text }),
+      });
+      if (!res.ok) {
+        setErrorMessage("Extraction failed — please try a different file.");
+        setStatus("error");
+        return;
+      }
+      const data: ResumeData = await res.json();
+      setResumeData(data);
+      setStatus("success");
+    } catch {
+      setErrorMessage("Extraction failed — please try a different file.");
+      setStatus("error");
+    }
+  }
+
+  return (
+    <main className="max-w-2xl mx-auto p-8">
+      <h1 className="text-xl font-semibold mb-4">CV Parser</h1>
+
+      <form onSubmit={handleSubmit} className="flex items-center gap-3 mb-6">
+        <input type="file" accept=".pdf,application/pdf" onChange={handleFileChange} />
+        <button type="submit" disabled={!file || status === "loading"}>
+          {status === "loading" ? "Extracting…" : "Extract"}
+        </button>
+      </form>
+
+      {status === "error" && errorMessage && <p role="alert">{errorMessage}</p>}
+
+      {status === "success" && resumeData && <ResumeResult data={resumeData} />}
+    </main>
+  );
+}
+
+function ResumeResult({ data }: { data: ResumeData }) {
+  return (
+    <div className="flex flex-col gap-6">
+      <section>
+        <h2 className="font-semibold">Contact</h2>
+        <dl>
+          <div>
+            <dt className="inline font-medium">Name: </dt>
+            <dd className="inline">{data.contact.fullName ?? "—"}</dd>
+          </div>
+          <div>
+            <dt className="inline font-medium">Email: </dt>
+            <dd className="inline">{data.contact.email ?? "—"}</dd>
+          </div>
+          <div>
+            <dt className="inline font-medium">Phone: </dt>
+            <dd className="inline">{data.contact.phone ?? "—"}</dd>
+          </div>
+          <div>
+            <dt className="inline font-medium">Location: </dt>
+            <dd className="inline">{data.contact.location ?? "—"}</dd>
+          </div>
+          <div>
+            <dt className="inline font-medium">LinkedIn: </dt>
+            <dd className="inline">{data.contact.linkedin ?? "—"}</dd>
+          </div>
+          <div>
+            <dt className="inline font-medium">GitHub: </dt>
+            <dd className="inline">{data.contact.github ?? "—"}</dd>
+          </div>
+          <div>
+            <dt className="inline font-medium">Website: </dt>
+            <dd className="inline">{data.contact.website ?? "—"}</dd>
+          </div>
+        </dl>
+      </section>
+
+      {data.summary && (
+        <section>
+          <h2 className="font-semibold">Summary</h2>
+          <p>{data.summary}</p>
+        </section>
+      )}
+
+      <section>
+        <h2 className="font-semibold">Experience</h2>
+        {data.experience.map((entry, i) => (
+          <div key={i} className="mb-3">
+            <p className="font-medium">
+              {entry.title} — {entry.company}
+            </p>
+            <p className="text-sm">
+              {entry.dateRange.start?.raw ?? "—"} to{" "}
+              {entry.dateRange.isCurrent ? "Present" : entry.dateRange.end?.raw ?? "—"}
+              {entry.location ? ` · ${entry.location}` : ""}
+            </p>
+            <ul className="list-disc list-inside">
+              {entry.bullets.map((bullet, j) => (
+                <li key={j}>{bullet}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </section>
+
+      <section>
+        <h2 className="font-semibold">Education</h2>
+        {data.education.map((entry, i) => (
+          <div key={i} className="mb-3">
+            <p className="font-medium">{entry.institution}</p>
+            <p className="text-sm">
+              {entry.degree ?? "—"}
+              {entry.fieldOfStudy ? `, ${entry.fieldOfStudy}` : ""} ·{" "}
+              {entry.dateRange.start?.raw ?? "—"} to{" "}
+              {entry.dateRange.isCurrent ? "Present" : entry.dateRange.end?.raw ?? "—"}
+            </p>
+          </div>
+        ))}
+      </section>
+
+      <section>
+        <h2 className="font-semibold">Skills</h2>
+        <p>{data.skills.join(", ") || "—"}</p>
+      </section>
+
+      {data.additionalSections.map((section, i) => (
+        <section key={i}>
+          <h2 className="font-semibold">{section.title}</h2>
+          <ul className="list-disc list-inside">
+            {section.items.map((item, j) => (
+              <li key={j}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ))}
+
+      <p className="text-sm text-gray-500">Detected language: {data.detectedLanguage}</p>
     </div>
   );
 }
