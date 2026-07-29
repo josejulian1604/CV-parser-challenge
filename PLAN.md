@@ -15,7 +15,7 @@ Status legend: [ ] pending · [~] in progress · [x] done
 - [x] 1.2 PDF adapter (Stages 1-2) with offset↔bbox linking
 - [x] 1.3 Route handler + Anthropic provider (Stage 4, no router yet)
 - [x] 1.4 Validation + repair (Stage 5)
-- [ ] 1.5 Minimal UI: upload + undesigned results table
+- [x] 1.5 Minimal UI: upload + undesigned results table
 > Checkpoint: upload a real text-based PDF and see extracted data on screen.
 
 ## Phase 2 — Complete minimum requirements
