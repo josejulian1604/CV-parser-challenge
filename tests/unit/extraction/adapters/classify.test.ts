@@ -22,14 +22,14 @@ describe("classifyDocument", () => {
     }
   );
 
-  it("returns route_not_implemented for a .docx file", async () => {
+  it("routes a .docx file to the docx route", async () => {
     const file = new File(["dummy"], "resume.docx", {
       type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     });
     const result = await classifyDocument(file);
-    expect(result.ok).toBe(false);
-    if (!result.ok) {
-      expect(result.error).toEqual({ kind: "route_not_implemented", route: "docx" });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value.route).toBe("docx");
     }
   });
 

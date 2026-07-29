@@ -1,8 +1,33 @@
 import type { Result } from "./result";
+import { normalizeContact } from "./normalize/contact";
+import { normalizeDateRange, sortExperienceByRecency } from "./normalize/dates";
+import { normalizeSkills } from "./normalize/skills";
 import { AnthropicProvider, type LLMProvider } from "./structure/provider";
 import { structureResume, type StructureError } from "./structure/structure";
 import { validateAndRepair, type RepairError } from "./validation/repair";
 import type { ResumeData } from "./schema/resume";
+import type { NormalizedResumeData } from "./schema/normalized";
+
+// Stage 8: dates/contact/skills are independently re-derived server-side
+// regardless of what the model claimed (see docs/architecture.md, "Normalize
+// output"). Pure and total — normalization can't fail, so no new error type.
+function normalizeResume(data: ResumeData): NormalizedResumeData {
+  return {
+    ...data,
+    contact: normalizeContact(data.contact),
+    skills: normalizeSkills(data.skills),
+    experience: sortExperienceByRecency(
+      data.experience.map((entry) => ({
+        ...entry,
+        dateRange: normalizeDateRange(entry.dateRange),
+      }))
+    ),
+    education: data.education.map((entry) => ({
+      ...entry,
+      dateRange: normalizeDateRange(entry.dateRange),
+    })),
+  };
+}
 
 // classify.ts and pdf.ts (stages 1-2) run browser-side only — the file
 // never leaves the browser, per architecture.md's privacy note — so they
@@ -13,9 +38,12 @@ import type { ResumeData } from "./schema/resume";
 export async function runServerPipeline(
   sourceText: string,
   provider: LLMProvider = new AnthropicProvider()
-): Promise<Result<ResumeData, StructureError | RepairError>> {
+): Promise<Result<NormalizedResumeData, StructureError | RepairError>> {
   const structured = await structureResume(provider, sourceText);
   if (!structured.ok) return structured;
 
-  return validateAndRepair(provider, structured.value);
+  const repaired = await validateAndRepair(provider, structured.value);
+  if (!repaired.ok) return repaired;
+
+  return { ok: true, value: normalizeResume(repaired.value) };
 }

@@ -104,8 +104,15 @@ reading the code, not a claim made in the README.
 8. **Normalize output** (`normalize/*.ts`) — server, $0. Dates to
    ISO where possible (keep `raw` string always — grounding needs the
    literal text, not the normalized value). Email/phone re-validated
-   by regex regardless of what the model claimed. Skills deduplicated
-   with canonical casing. Language detected (en/es).
+   by regex regardless of what the model claimed, surfaced as an
+   `isEmailValid`/`isPhoneValid` flag rather than silently dropped or
+   kept indistinguishable from a valid value. Skills deduplicated by
+   the most-common exact casing variant per skill (not a hardcoded
+   canonical-casing dictionary — unbounded maintenance for a problem
+   "most common wins" already solves in practice). `detectedLanguage`
+   is the model's own stage 4 output, passed through unchanged here;
+   heuristic-only language detection independent of the model belongs
+   to stage 9's fallback (PLAN.md 3.2), not this stage.
 9. **Fallback** (`fallback/heuristic.ts`) — $0, last resort. Runs on
    any failure (network, budget exhausted, provider down, repeated
    validation failure). Regex-only extraction of email, phone,
@@ -162,6 +169,53 @@ coordinates. Grounding still works (confidence + text span), but
 "click to highlight on the rendered page" only applies to the PDF
 route. DOCX highlighting targets a plain-text view, not a rendered
 page image. This is a different behavior, not a bug.
+
+## Known limitation: DOCX tables
+Mammoth renders table cells as plain paragraphs with no signal that
+they came from a table. The DOCX adapter reads them in raw row-by-row
+document order, same as any other paragraph — a multi-column table
+(e.g. a skills grid or a date/role sidebar) will interleave the same
+way two-column PDFs do (see "Known limitation: two-column PDFs").
+Acceptable for this scope; revisit if a golden-set CV actually uses
+table-based layout.
+
+## Print export constraints
+Task 2.4 validated `window.print()` + print CSS against real
+multi-section content (sample-1.pdf's 6-section extraction, rendered
+through the plain results view) — the mechanism works. Task 2.5's
+final portfolio design must respect these constraints, discovered
+against that real content, not against 2.5's own layout yet:
+
+- **CSS Grid/Flexbox for top-level page structure is risky.** Fine for
+  small internal components (e.g. a row of pills, a two-column detail
+  line), but a whole-page Grid/Flexbox layout fragments unreliably
+  across printed pages — browsers don't guarantee sensible breaks
+  inside grid/flex containers the way they do for normal block flow.
+- **`position: sticky`/`fixed` don't translate to print** — there is
+  no viewport to stick/fix to across paginated output; anything relying
+  on either will misbehave or simply not render as intended.
+- **`overflow: hidden` on content containers clips instead of
+  paginating.** A container sized for one screen height that clips its
+  overflow will silently cut off content at a page boundary instead of
+  flowing it onto the next page.
+- **Any background color that carries meaning needs
+  `print-color-adjust: exact` (and `-webkit-print-color-adjust: exact`)
+  explicitly on that element.** Browsers suppress background-color
+  printing by default; without this, a colored section header or
+  sidebar just prints white.
+- **`break-inside: avoid` must be scoped to atomic units, not whole
+  sections that can legitimately span multiple pages.** A section like
+  Experience (several jobs, each with bullets) is often taller than
+  one page — `break-inside: avoid` on the whole section either gets
+  ignored (browser breaks it somewhere arbitrary anyway) or forces a
+  large blank gap by pushing the entire section to the next page.
+  The pattern that actually works: `break-after: avoid` on the section
+  heading (keeps the header glued to what follows it, without
+  constraining section length), and `break-inside: avoid` on each
+  individual entry (one job, one degree — short, atomic, never split
+  mid-bullet). Whole-section `break-inside: avoid` is only safe for
+  inherently short, atomic sections (Contact, Summary, Skills, short
+  item-list sections).
 
 ## Folder structure
 

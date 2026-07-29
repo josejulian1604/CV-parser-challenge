@@ -24,3 +24,18 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* No Tailwind utility covers @page itself (it styles the printed page
+   box, not an element) — margins and forced color-adjust live here;
+   everything else print-related is Tailwind's print: variant in JSX. */
+@media print {
+  @page {
+    margin: 1.5cm;
+  }
+
+  html,
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

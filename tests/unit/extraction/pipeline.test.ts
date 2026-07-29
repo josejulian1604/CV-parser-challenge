@@ -22,6 +22,13 @@ function validResumeData() {
   };
 }
 
+function normalizedResumeData() {
+  return {
+    ...validResumeData(),
+    contact: { ...validResumeData().contact, isEmailValid: true, isPhoneValid: true },
+  };
+}
+
 function fakeProviderQueue(responses: unknown[]) {
   const calls: StructuredCompletionRequest[] = [];
   const provider: LLMProvider = {
@@ -38,7 +45,7 @@ describe("runServerPipeline", () => {
   it("returns ok when structure produces already-valid JSON", async () => {
     const { provider, calls } = fakeProviderQueue([validResumeData()]);
     const result = await runServerPipeline("some resume text", provider);
-    expect(result).toEqual({ ok: true, value: validResumeData() });
+    expect(result).toEqual({ ok: true, value: normalizedResumeData() });
     expect(calls.length).toBe(1); // structure only, repair never called
   });
 
@@ -54,7 +61,7 @@ describe("runServerPipeline", () => {
     const { detectedLanguage: _omit, ...missingLanguage } = validResumeData();
     const { provider, calls } = fakeProviderQueue([missingLanguage, validResumeData()]);
     const result = await runServerPipeline("some resume text", provider);
-    expect(result).toEqual({ ok: true, value: validResumeData() });
+    expect(result).toEqual({ ok: true, value: normalizedResumeData() });
     expect(calls.length).toBe(2); // structure + one repair attempt
   });
 });
