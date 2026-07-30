@@ -18,6 +18,9 @@ build/
 
 # testing
 coverage/
+playwright-report/
+test-results/
+blob-report/
 
 # misc
 .DS_Store

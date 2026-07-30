@@ -16,6 +16,8 @@ Status legend: [ ] pending · [~] in progress · [x] done
 - [x] 1.3 Route handler + Anthropic provider (Stage 4, no router yet)
 - [x] 1.4 Validation + repair (Stage 5)
 - [x] 1.5 Minimal UI: upload + undesigned results table
+      (superseded by task 2.5's redesign and the route split —
+      kept as historical record, not live documentation)
 > Checkpoint: upload a real text-based PDF and see extracted data on screen.
 
 ## Phase 2 — Complete minimum requirements

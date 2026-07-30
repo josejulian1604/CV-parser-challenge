@@ -16,9 +16,11 @@ model in frontmatter — see those files for the exact definitions):
 
 - **code-reviewer** — read-only tools only (no file writes). Reserved
   for higher-risk modules specifically: the PDF adapter's offset↔bbox
-  linking, grounding, escalation/router, validation/repair. Checks
-  the diff against docs/conventions.md and flags violations, missed
-  error paths, and Result-type misuse.
+  linking, grounding, escalation/router, validation/repair, and any
+  cross-route state transfer (losing already-extracted data on
+  navigation means a paid LLM call gets silently discarded, forcing
+  a re-upload). Checks the diff against docs/conventions.md and
+  flags violations, missed error paths, and Result-type misuse.
 - **test-writer** — write access limited to `tests/unit/**`. Also
   reserved for the same higher-risk modules.
 
@@ -47,7 +49,7 @@ real pass/fail output.
   adapter, one component) — never a batch of unrelated changes.
 - Message format: Conventional Commits, imperative mood.
   `feat(extraction): add PDF adapter with offset-linked blocks`
-- Never add AI attribution of any kind: no "Generated with Claude
+- Never add AI attribution of any kind: no "🤖 Generated with Claude
   Code" line, no "Co-Authored-By: Claude" trailer, no footer
   referencing Claude or Anthropic. Commits must read as authored by
   the human alone — a deliberate project decision, not an oversight.

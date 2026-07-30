@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Fraunces, Inter, IBM_Plex_Mono } from "next/font/google";
+import { ResumeDataProvider } from "./resume-data-context";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -42,7 +43,7 @@ export default function RootLayout({
       <body
         className={`${spaceGrotesk.variable} ${fraunces.variable} ${inter.variable} ${ibmPlexMono.variable} antialiased`}
       >
-        {children}
+        <ResumeDataProvider>{children}</ResumeDataProvider>
       </body>
     </html>
   );

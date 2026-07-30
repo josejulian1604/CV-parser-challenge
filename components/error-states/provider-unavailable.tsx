@@ -33,10 +33,10 @@ function messageFor(kind: ProviderUnavailableProps["kind"], retryAfterMs?: numbe
 
 export function ProviderUnavailable({ kind, retryAfterMs, onRetry }: ProviderUnavailableProps) {
   return (
-    <div role="alert" className="rounded border border-red-300 bg-red-50 p-4">
-      <p className="font-medium">Extraction failed</p>
-      <p className="text-sm text-gray-600">{messageFor(kind, retryAfterMs)}</p>
-      <button type="button" onClick={onRetry} className="mt-2 text-sm underline">
+    <div role="alert" className="rounded border border-red-800/60 bg-red-950/40 p-4">
+      <p className="font-medium text-ink">Extraction failed</p>
+      <p className="text-sm text-muted">{messageFor(kind, retryAfterMs)}</p>
+      <button type="button" onClick={onRetry} className="mt-2 text-sm text-ink underline">
         Try again
       </button>
     </div>

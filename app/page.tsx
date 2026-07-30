@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { classifyDocument } from "@/lib/extraction/adapters/classify";
 import { parseDocx } from "@/lib/extraction/adapters/docx";
 import { parsePdf } from "@/lib/extraction/adapters/pdf";
 import { truncateToPageLimit } from "@/lib/extraction/limits";
 import { MAX_PAGES } from "@/lib/config/limits";
 import type { NormalizedResumeData } from "@/lib/extraction/schema/normalized";
+import { useResumeData } from "./resume-data-context";
 import { UnsupportedFileType } from "@/components/error-states/unsupported-file-type";
 import { NotYetSupported } from "@/components/error-states/not-yet-supported";
 import { CorruptFile } from "@/components/error-states/corrupt-file";
@@ -15,8 +17,6 @@ import {
   type ProviderUnavailableKind,
 } from "@/components/error-states/provider-unavailable";
 import { RepairFailed } from "@/components/error-states/repair-failed";
-import { PartialTruncationNotice } from "@/components/error-states/partial-truncation-notice";
-import { ResumePortfolio } from "@/components/result/resume-portfolio";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -59,24 +59,39 @@ function serverErrorState(error: { kind: string; retryAfterMs?: number | null })
 }
 
 export default function Home() {
+  return (
+    // Fallback mirrors the page's own heading rather than null, so a
+    // suspended render shows the page shell instead of a blank screen.
+    <Suspense fallback={<h1 className="text-xl font-semibold mb-4 text-ink max-w-2xl mx-auto p-8">CV Parser</h1>}>
+      <HomeContent />
+    </Suspense>
+  );
+}
+
+// useSearchParams (for the ?notice=no-result query param) requires a
+// Suspense boundary around its caller, or Next.js bails the whole page out
+// of static rendering at build time — split out so the boundary is scoped
+// tightly rather than wrapping in an ad-hoc way at the call site.
+function HomeContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { setResumeData, clear } = useResumeData();
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<Status>("idle");
   const [errorState, setErrorState] = useState<ErrorState | null>(null);
-  const [resumeData, setResumeData] = useState<NormalizedResumeData | null>(null);
-  const [truncated, setTruncated] = useState(false);
+
+  const showNoResultNotice = searchParams.get("notice") === "no-result";
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     setFile(e.target.files?.[0] ?? null);
     setStatus("idle");
     setErrorState(null);
-    setResumeData(null);
-    setTruncated(false);
+    clear();
   }
 
   async function runExtraction(fileToProcess: File) {
     setStatus("loading");
     setErrorState(null);
-    setTruncated(false);
 
     const classified = await classifyDocument(fileToProcess);
     if (!classified.ok) {
@@ -116,9 +131,9 @@ export default function Home() {
         return;
       }
       const data: NormalizedResumeData = await res.json();
-      setResumeData(data);
-      setTruncated(wasTruncated);
       setStatus("success");
+      setResumeData(data, wasTruncated);
+      router.push("/result");
     } catch {
       setErrorState({ case: "provider-unavailable", kind: "network_error" });
       setStatus("error");
@@ -134,44 +149,38 @@ export default function Home() {
     if (file) runExtraction(file);
   }
 
-  function handlePrint() {
-    document.title = `${resumeData?.contact.fullName ?? "Resume"} - Resume`;
-    window.print();
-  }
-
   return (
-    <main className="min-h-screen bg-line/30 print:bg-transparent">
-      <div className="max-w-2xl mx-auto p-8 print:hidden">
-        <h1 className="text-xl font-semibold mb-4 text-ink">CV Parser</h1>
+    <main className="min-h-screen bg-paper text-ink">
+      <div className="mx-auto max-w-[820px] px-14 py-20 max-sm:px-6 max-sm:py-14">
+        <h1 className="mb-10 font-head text-xl font-bold text-ink">CV Parser</h1>
 
-        <form onSubmit={handleSubmit} className="flex items-center gap-3 mb-6">
-          <input type="file" accept=".pdf,application/pdf,.docx" onChange={handleFileChange} />
+        {showNoResultNotice && (
+          <p role="status" className="mb-6 rounded border border-line p-3 text-sm text-muted">
+            We couldn&apos;t find an active result — please upload again.
+          </p>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          <div className="rounded-lg border border-dashed border-line p-10 text-center">
+            <input type="file" accept=".pdf,application/pdf,.docx" onChange={handleFileChange} />
+            <p className="mt-3 font-body text-xs text-muted">PDF or Word, up to 3 pages</p>
+          </div>
+
           <button
             type="submit"
             disabled={!file || status === "loading"}
-            className="bg-accent text-accent-ink rounded px-4 py-2 disabled:opacity-50"
+            className="mt-6 bg-accent text-accent-ink rounded px-4 py-2 disabled:opacity-50"
           >
             {status === "loading" ? "Extracting…" : "Extract"}
           </button>
         </form>
 
-        {status === "error" && errorState && <ErrorDisplay state={errorState} onRetry={retry} />}
-
-        {status === "success" && resumeData && (
-          <div>
-            {truncated && <PartialTruncationNotice />}
-            <button
-              type="button"
-              onClick={handlePrint}
-              className="mt-2 bg-accent text-accent-ink rounded px-4 py-2"
-            >
-              Download PDF
-            </button>
+        {status === "error" && errorState && (
+          <div className="mt-8">
+            <ErrorDisplay state={errorState} onRetry={retry} />
           </div>
         )}
       </div>
-
-      {status === "success" && resumeData && <ResumePortfolio data={resumeData} />}
     </main>
   );
 }
