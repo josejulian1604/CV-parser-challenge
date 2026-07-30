@@ -140,7 +140,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-hairline/30 print:bg-transparent">
+    <main className="min-h-screen bg-line/30 print:bg-transparent">
       <div className="max-w-2xl mx-auto p-8 print:hidden">
         <h1 className="text-xl font-semibold mb-4 text-ink">CV Parser</h1>
 
@@ -149,7 +149,7 @@ export default function Home() {
           <button
             type="submit"
             disabled={!file || status === "loading"}
-            className="bg-pine text-white rounded px-4 py-2 disabled:opacity-50"
+            className="bg-accent text-accent-ink rounded px-4 py-2 disabled:opacity-50"
           >
             {status === "loading" ? "Extracting…" : "Extract"}
           </button>
@@ -163,7 +163,7 @@ export default function Home() {
             <button
               type="button"
               onClick={handlePrint}
-              className="mt-2 bg-pine text-white rounded px-4 py-2"
+              className="mt-2 bg-accent text-accent-ink rounded px-4 py-2"
             >
               Download PDF
             </button>

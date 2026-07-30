@@ -29,3 +29,8 @@ npm-debug.log*
 next-env.d.ts
 
 eval/results/*.local.json
+
+# design reference — visual mockup used to brief Claude Code, not
+# part of the shipped app (uses manual Google Fonts <link>, includes
+# a dev-only print-preview toggle explicitly excluded from production)
+design-reference/

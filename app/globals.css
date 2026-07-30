@@ -4,28 +4,30 @@
   --background: #ffffff;
   --foreground: #171717;
 
-  /* Portfolio palette (task 2.5) — deliberately fixed, not dark-mode
-     aware: a resume is printed/shared content, not app chrome, so it
-     shouldn't invert with the viewer's OS theme. */
-  --ink: #1c1c1e;
-  --paper: #fdfcfa;
-  --pine: #2f5d50;
-  --pine-soft: #e4ede9;
-  --muted: #6b6b6b;
-  --hairline: #e0dbd1;
+  /* Dark editorial portfolio palette (docs/Design-guidance.md §1).
+     Overridden for print below — same variable names, different
+     values, so component code never needs a print-specific rewrite. */
+  --paper: #14151a;
+  --ink: #eceae3;
+  --muted: #97948c;
+  --line: #2b2c31;
+  --accent: #d7a34e;
+  --accent-ink: #1c1610;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-ink: var(--ink);
   --color-paper: var(--paper);
-  --color-pine: var(--pine);
-  --color-pine-soft: var(--pine-soft);
+  --color-ink: var(--ink);
   --color-muted: var(--muted);
-  --color-hairline: var(--hairline);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --font-head: var(--font-space-grotesk);
+  --font-voice: var(--font-fraunces);
+  --font-body: var(--font-inter);
+  --font-mono: var(--font-ibm-plex-mono);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -38,7 +40,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), Arial, Helvetica, sans-serif;
 }
 
 /* No Tailwind utility covers @page itself (it styles the printed page
@@ -53,5 +55,18 @@ body {
   body {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+  }
+
+  /* Print palette (docs/Design-guidance.md §1) — same variable names,
+     overridden values. The accent is darkened for legibility/ink
+     economy on white; everything else is a straightforward light-mode
+     swap of the same tokens components already read from. */
+  :root {
+    --paper: #ffffff;
+    --ink: #181818;
+    --muted: #5a5a5a;
+    --line: #dedede;
+    --accent: #8a5a1e;
+    --accent-ink: #ffffff;
   }
 }

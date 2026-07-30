@@ -35,7 +35,7 @@ Status legend: [ ] pending · [~] in progress · [x] done
       constraints documented in 2.4. After building, re-verify PDF
       export still produces a clean result against this real design
       — not just the placeholder from 2.4.
-- [ ] 2.6 Verified deploy with final domain, manual smoke test
+- [x] 2.6 Verified deploy with final domain, manual smoke test
       (include a real end-to-end PDF export check against the 2.5
       design as part of this smoke test)
 > Checkpoint: the brief's minimum requirements are covered with a
