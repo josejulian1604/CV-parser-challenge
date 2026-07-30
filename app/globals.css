@@ -3,11 +3,27 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Portfolio palette (task 2.5) — deliberately fixed, not dark-mode
+     aware: a resume is printed/shared content, not app chrome, so it
+     shouldn't invert with the viewer's OS theme. */
+  --ink: #1c1c1e;
+  --paper: #fdfcfa;
+  --pine: #2f5d50;
+  --pine-soft: #e4ede9;
+  --muted: #6b6b6b;
+  --hairline: #e0dbd1;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-ink: var(--ink);
+  --color-paper: var(--paper);
+  --color-pine: var(--pine);
+  --color-pine-soft: var(--pine-soft);
+  --color-muted: var(--muted);
+  --color-hairline: var(--hairline);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

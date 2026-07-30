@@ -22,13 +22,13 @@ Status legend: [ ] pending · [~] in progress · [x] done
 - [x] 2.1 DOCX adapter (mammoth.js)
 - [x] 2.2 Final normalization (Stage 8)
 - [x] 2.3 Error state catalog + components
-- [ ] 2.4 Export mechanism validated (window.print, print CSS, page
+- [x] 2.4 Export mechanism validated (window.print, print CSS, page
       breaks) against multi-section placeholder content — mechanism
       works, NOT yet proven against 2.5's final complex layout.
       Print-safety constraints for 2.5 documented in
       architecture.md (CSS Grid/Flexbox for page structure,
       position: sticky/fixed, overflow: hidden, print-color-adjust).
-- [ ] 2.5 Portfolio redesign — the actual "reimagined profile"
+- [x] 2.5 Portfolio redesign — the actual "reimagined profile"
       requirement from the brief (25% of the evaluation, same weight
       as functionality). Portfolio-style, candidate-facing, per the
       resolved design decision. Must respect the print-safety

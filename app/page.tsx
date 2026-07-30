@@ -16,7 +16,7 @@ import {
 } from "@/components/error-states/provider-unavailable";
 import { RepairFailed } from "@/components/error-states/repair-failed";
 import { PartialTruncationNotice } from "@/components/error-states/partial-truncation-notice";
-import { MissingFieldIndicator } from "@/components/shared/missing-field-indicator";
+import { ResumePortfolio } from "@/components/result/resume-portfolio";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -140,33 +140,38 @@ export default function Home() {
   }
 
   return (
-    <main className="max-w-2xl mx-auto p-8">
-      <h1 className="text-xl font-semibold mb-4 print:hidden">CV Parser</h1>
+    <main className="min-h-screen bg-hairline/30 print:bg-transparent">
+      <div className="max-w-2xl mx-auto p-8 print:hidden">
+        <h1 className="text-xl font-semibold mb-4 text-ink">CV Parser</h1>
 
-      <form onSubmit={handleSubmit} className="flex items-center gap-3 mb-6 print:hidden">
-        <input type="file" accept=".pdf,application/pdf,.docx" onChange={handleFileChange} />
-        <button type="submit" disabled={!file || status === "loading"}>
-          {status === "loading" ? "Extracting…" : "Extract"}
-        </button>
-      </form>
+        <form onSubmit={handleSubmit} className="flex items-center gap-3 mb-6">
+          <input type="file" accept=".pdf,application/pdf,.docx" onChange={handleFileChange} />
+          <button
+            type="submit"
+            disabled={!file || status === "loading"}
+            className="bg-pine text-white rounded px-4 py-2 disabled:opacity-50"
+          >
+            {status === "loading" ? "Extracting…" : "Extract"}
+          </button>
+        </form>
 
-      {status === "error" && errorState && (
-        <div className="print:hidden">
-          <ErrorDisplay state={errorState} onRetry={retry} />
-        </div>
-      )}
+        {status === "error" && errorState && <ErrorDisplay state={errorState} onRetry={retry} />}
 
-      {status === "success" && resumeData && (
-        <div className="flex flex-col gap-4">
-          <div className="print:hidden">
+        {status === "success" && resumeData && (
+          <div>
             {truncated && <PartialTruncationNotice />}
-            <button type="button" onClick={handlePrint} className="mt-2">
+            <button
+              type="button"
+              onClick={handlePrint}
+              className="mt-2 bg-pine text-white rounded px-4 py-2"
+            >
               Download PDF
             </button>
           </div>
-          <ResumeResult data={resumeData} />
-        </div>
-      )}
+        )}
+      </div>
+
+      {status === "success" && resumeData && <ResumePortfolio data={resumeData} />}
     </main>
   );
 }
@@ -186,111 +191,4 @@ function ErrorDisplay({ state, onRetry }: { state: ErrorState; onRetry: () => vo
     case "repair-failed":
       return <RepairFailed onRetry={onRetry} />;
   }
-}
-
-function ResumeResult({ data }: { data: NormalizedResumeData }) {
-  return (
-    <div className="flex flex-col gap-6">
-      <section className="print:break-inside-avoid">
-        <h2 className="font-semibold print:break-after-avoid">Contact</h2>
-        <dl>
-          <div>
-            <dt className="inline font-medium">Name: </dt>
-            <dd className="inline">
-              {data.contact.fullName ?? <MissingFieldIndicator />}
-            </dd>
-          </div>
-          <div>
-            <dt className="inline font-medium">Email: </dt>
-            <dd className="inline">
-              {data.contact.email ?? <MissingFieldIndicator />}
-            </dd>
-          </div>
-          <div>
-            <dt className="inline font-medium">Phone: </dt>
-            <dd className="inline">{data.contact.phone ?? "—"}</dd>
-          </div>
-          <div>
-            <dt className="inline font-medium">Location: </dt>
-            <dd className="inline">{data.contact.location ?? "—"}</dd>
-          </div>
-          <div>
-            <dt className="inline font-medium">LinkedIn: </dt>
-            <dd className="inline">{data.contact.linkedin ?? "—"}</dd>
-          </div>
-          <div>
-            <dt className="inline font-medium">GitHub: </dt>
-            <dd className="inline">{data.contact.github ?? "—"}</dd>
-          </div>
-          <div>
-            <dt className="inline font-medium">Website: </dt>
-            <dd className="inline">{data.contact.website ?? "—"}</dd>
-          </div>
-        </dl>
-      </section>
-
-      {data.summary && (
-        <section className="print:break-inside-avoid">
-          <h2 className="font-semibold print:break-after-avoid">Summary</h2>
-          <p>{data.summary}</p>
-        </section>
-      )}
-
-      <section>
-        <h2 className="font-semibold print:break-after-avoid">Experience</h2>
-        {data.experience.map((entry, i) => (
-          <div key={i} className="mb-3 print:break-inside-avoid">
-            <p className="font-medium">
-              {entry.title} — {entry.company}
-            </p>
-            <p className="text-sm">
-              {entry.dateRange.start?.raw ?? "—"} to{" "}
-              {entry.dateRange.isCurrent ? "Present" : entry.dateRange.end?.raw ?? "—"}
-              {entry.location ? ` · ${entry.location}` : ""}
-            </p>
-            <ul className="list-disc list-inside">
-              {entry.bullets.map((bullet, j) => (
-                <li key={j}>{bullet}</li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </section>
-
-      <section>
-        <h2 className="font-semibold print:break-after-avoid">Education</h2>
-        {data.education.map((entry, i) => (
-          <div key={i} className="mb-3 print:break-inside-avoid">
-            <p className="font-medium">{entry.institution}</p>
-            <p className="text-sm">
-              {entry.degree ?? "—"}
-              {entry.fieldOfStudy ? `, ${entry.fieldOfStudy}` : ""} ·{" "}
-              {entry.dateRange.start?.raw ?? "—"} to{" "}
-              {entry.dateRange.isCurrent ? "Present" : entry.dateRange.end?.raw ?? "—"}
-            </p>
-          </div>
-        ))}
-      </section>
-
-      <section className="print:break-inside-avoid">
-        <h2 className="font-semibold print:break-after-avoid">Skills</h2>
-        <p>{data.skills.join(", ") || "—"}</p>
-      </section>
-
-      {data.additionalSections.map((section, i) => (
-        <section key={i} className="print:break-inside-avoid">
-          <h2 className="font-semibold print:break-after-avoid">{section.title}</h2>
-          <ul className="list-disc list-inside">
-            {section.items.map((item, j) => (
-              <li key={j}>{item}</li>
-            ))}
-          </ul>
-        </section>
-      ))}
-
-      <p className="text-sm text-gray-500 print:hidden">
-        Detected language: {data.detectedLanguage}
-      </p>
-    </div>
-  );
 }
