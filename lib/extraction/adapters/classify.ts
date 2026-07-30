@@ -10,11 +10,7 @@ export interface ClassifiedDoc {
 
 export type ClassifyError =
   | { kind: "unrecognized_file_type"; name: string; type: string }
-  | PdfLoadError
-  | {
-      kind: "route_not_implemented";
-      route: Exclude<ExtractionRoute, "pdf-with-text" | "docx">;
-    };
+  | PdfLoadError;
 
 // Scanned PDFs have no text layer (or a near-empty one); text-based resumes
 // comfortably clear this even on a single sparse page. See architecture.md
@@ -39,7 +35,7 @@ export async function classifyDocument(
   }
 
   if (type.startsWith("image/")) {
-    return { ok: false, error: { kind: "route_not_implemented", route: "image" } };
+    return { ok: true, value: { route: "image", file } };
   }
 
   return {
@@ -67,5 +63,5 @@ async function classifyPdf(file: File): Promise<Result<ClassifiedDoc, ClassifyEr
     return { ok: true, value: { route: "pdf-with-text", file } };
   }
 
-  return { ok: false, error: { kind: "route_not_implemented", route: "pdf-scanned" } };
+  return { ok: true, value: { route: "pdf-scanned", file } };
 }

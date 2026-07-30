@@ -6,6 +6,16 @@ import type {
   ProviderError,
 } from "../../../../lib/extraction/structure/provider";
 
+// repair.ts always builds a text prompt (it operates on malformed JSON text,
+// never an image) — narrows the provider-agnostic userMessage type back to
+// string for assertions that need string-only methods like .split.
+function asText(userMessage: StructuredCompletionRequest["userMessage"]): string {
+  if (typeof userMessage !== "string") {
+    throw new Error("expected a text userMessage, got image content");
+  }
+  return userMessage;
+}
+
 function validResumeData() {
   return {
     contact: {
@@ -97,7 +107,7 @@ describe("validateAndRepair", () => {
     // the malformed-JSON blob legitimately contains the literal key
     // "detectedLanguage" (it's present and valid in attempt 1's output), so
     // a substring check against the full message would false-negative here.
-    const issuesLine = calls[1].userMessage.split("\n\nMalformed JSON:")[0];
+    const issuesLine = asText(calls[1].userMessage).split("\n\nMalformed JSON:")[0];
     expect(issuesLine).toContain("contact.email");
     expect(issuesLine).not.toContain("- detectedLanguage:");
   });

@@ -24,78 +24,78 @@ Status legend: [ ] pending · [~] in progress · [x] done
 - [x] 2.1 DOCX adapter (mammoth.js)
 - [x] 2.2 Final normalization (Stage 8)
 - [x] 2.3 Error state catalog + components
-- [x] 2.4 Export mechanism validated (window.print, print CSS, page
-      breaks) against multi-section placeholder content — mechanism
-      works, NOT yet proven against 2.5's final complex layout.
-      Print-safety constraints for 2.5 documented in
-      architecture.md (CSS Grid/Flexbox for page structure,
-      position: sticky/fixed, overflow: hidden, print-color-adjust).
-- [x] 2.5 Portfolio redesign — the actual "reimagined profile"
-      requirement from the brief (25% of the evaluation, same weight
-      as functionality). Portfolio-style, candidate-facing, per the
-      resolved design decision. Must respect the print-safety
-      constraints documented in 2.4. After building, re-verify PDF
-      export still produces a clean result against this real design
-      — not just the placeholder from 2.4.
-- [x] 2.6 Verified deploy with final domain, manual smoke test
-      (include a real end-to-end PDF export check against the 2.5
-      design as part of this smoke test)
-> Checkpoint: the brief's minimum requirements are covered with a
-> real designed output — not just data extraction with an undesigned
-> table standing in for "redesign."
+- [x] 2.4 Export mechanism validated (print CSS, page breaks)
+- [x] 2.5 Portfolio redesign (docs/design-spec.md) + route split
+      (upload / and result /result, in-memory state transfer)
+- [x] 2.6 Verified deploy, manual smoke test (six-step flow, passed)
+> Checkpoint: brief's minimum requirements covered with a real
+> designed, deployed output. CLOSED.
 
-## Phase 3 — Extra features
-- [ ] 3.1 Image/scanned adapter (vision, no grounding — per decision)
-- [ ] 3.2 EN/ES detection + heuristic fallback (Stage 9)
-- [ ] 3.3 Rate limit + daily budget (Redis) — Stage 3 complete
-- [ ] 3.4 Haiku→Sonnet router (Stage 7)
-- [ ] 3.5 Review/edit flow for extracted fields — real UI work,
-      editable inputs layered on top of the 2.5 design, not internal
-      logic only
-- [ ] 3.6a Curate golden set — manual, outside Claude Code sessions,
-      see testing.md
-- [ ] 3.6b Build eval harness script (run-eval.ts) — delegable
-- [ ] 3.7 Unit tests mirroring lib/extraction
-> Checkpoint: every bonus point in the brief is covered.
+## Phase 3 — Extra features (SCOPE REDUCED — time constraint)
+Given the submission deadline, only the following are being built.
+Everything else in this phase is explicitly deferred — see "Deferred
+scope" below, which doubles as README "known limitations" content.
 
-## Phase 4 — Own differentiators
-- [ ] 4.1 Full grounding (Stage 6) + offset mapping
-- [ ] 4.2 Visual highlight click→document zone (PDF) — real UI
-      interaction added on top of the 2.5 base design
-- [ ] 4.3 UI/UX polish — refinement pass on the 2.5 design (spacing,
-      micro-interactions, responsive tuning, the deferred fetch-
-      timeout/UnexpectedError state below) — NOT the initial design
-      direction, that's already decided and built in 2.5
-- [ ] 4.4 Demo mode with precomputed results
-- [ ] 4.5 Complete README with harness results, decisions, known limitations
-> Checkpoint: product finished, ready for submission.
+- [x] 3.1 Image/scanned adapter (vision, no grounding — per decision)
+      — in progress
+- [ ] 3.5 Review/edit flow for extracted fields
+- [ ] 3.8 (NEW) PNG export as a second download format, alongside the
+      existing print-ready PDF — per the "Resolved decisions" section
+      below, this was already flagged as an optional secondary path;
+      now confirmed in scope.
+> Checkpoint: the two features above work end-to-end; PNG export
+> available alongside PDF.
+
+### Deferred scope (time constraint — not started)
+- **3.2 EN/ES heuristic fallback (Stage 9)** — the LLM-based language
+  detection (`detectedLanguage`) already works today (task 1.3,
+  confirmed working) and drives the UI's bilingual chrome. What's
+  deferred is the no-LLM regex-only fallback path for when the model
+  is unavailable — the app currently has no Stage-9 equivalent at
+  all, so extraction failures fall through to a generic error state
+  rather than a partial heuristic result.
+- **3.3 Rate limit + daily budget (Redis)** — real residual risk: the
+  deployed endpoint has no server-side protection against high-volume
+  or abusive use during the review window. Partial mitigation in
+  place: a spending alert configured directly in the Anthropic
+  console (no code, covers the worst case of runaway cost, doesn't
+  cover availability/abuse).
+- **3.4 Haiku→Sonnet router** — Haiku 4.5 alone is used for every
+  extraction; no automatic escalation on low-confidence results.
+- **3.6a/b Eval harness (golden set + metrics)** — no measured
+  accuracy/cost numbers exist; any such figures can't be claimed in
+  the README.
+- **3.7 Additional unit tests beyond what exists** — current coverage
+  stops at what earlier tasks already built.
+
+## Phase 4 — Own differentiators (SCOPE REDUCED — time constraint)
+- [ ] 4.5 Complete README — setup instructions, architecture and
+      extraction-approach decisions, AI-assisted-process disclosure,
+      known limitations (= the "Deferred scope" list above), what
+      would be improved with more time.
+> Checkpoint: submission-ready.
+
+### Deferred scope (time constraint — not started)
+- **4.1/4.2 Grounding + visual highlight** — no confidence indicators,
+  no click-to-highlight-source feature. The "confidence indicators"
+  bonus point from the brief is not covered.
+- **4.3 UI/UX polish pass** — the design from task 2.5 ships as-is,
+  no additional refinement pass.
+- **4.4 Demo mode with precomputed results** — not built; every
+  visit requires a real upload and a real paid extraction call.
 
 ## Resolved decisions (from HatchWorks correspondence)
 - **Design direction**: portfolio-style page, candidate-facing —
-  confirmed choice, not just a default. Juan Carlos named this
-  explicitly ("a portfolio-style page the candidate would actually
-  want to share") while noting the exact visual execution is the
-  candidate's judgment to exercise. No further question needed here.
-- **Export (task 2.4/2.5)**: the PDF is the primary, required
-  deliverable — must be genuinely print-ready/sendable to an
-  employer. Since the on-screen design is portfolio-style (not
-  dashboard), a print-CSS layout of that same portfolio page should
-  be close to print-ready already. PNG export (html2canvas) may
-  still exist as a minor secondary option, not the primary path.
+  confirmed choice, not just a default.
+- **Export**: the PDF is the primary, required deliverable — must be
+  genuinely print-ready/sendable to an employer. PNG export is now
+  confirmed in scope as task 3.8 (see above), as a secondary format.
 - **AI-assisted process disclosure**: README-level disclosure only —
   no transcripts, prompt logs, or walkthrough needed.
 - **Page cap at 3**: confirmed as sound cost control, no change.
 
-## Deferred polish
-- Client-side fetch timeout + generic "unexpected error" UI state —
-  covers a hung request (e.g. connection drop mid-request) that the
-  server-side catch-all in route.ts doesn't reach, since nothing ever
-  returns to trigger it. Deferred to task 4.3.
-
 ## Environment notes
 - Project path must not contain `&` — cmd.exe treats it as a command
-  separator and breaks npm's generated .bin/*.cmd shims on Windows
-  (surfaced as `next dev` failing with a truncated/wrong path). Fixed
-  by relocating the repo. If a similar "file/command not found with a
-  truncated path" error shows up again with any other tool, check for
-  this first before assuming a dependency or config problem.
+  separator and breaks npm's generated .bin/*.cmd shims on Windows.
+  If a similar "file/command not found with a truncated path" error
+  shows up again with any other tool, check for this first.

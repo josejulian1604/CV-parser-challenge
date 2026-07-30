@@ -4,6 +4,7 @@ import Anthropic, {
   APIConnectionError,
   APIError,
 } from "@anthropic-ai/sdk";
+import type { Base64ImageSource } from "@anthropic-ai/sdk/resources/messages";
 import type { Result } from "../result";
 
 export type ProviderError =
@@ -14,10 +15,18 @@ export type ProviderError =
   | { kind: "refused"; category: string | null }
   | { kind: "malformed_response"; cause: unknown };
 
+// Provider-agnostic content shape — deliberately not Anthropic's own
+// content-block type, so swapping providers (see architecture.md's
+// provider-abstraction goal) never requires touching call sites, only the
+// translation inside each LLMProvider implementation below.
+export type MessageContentPart =
+  | { type: "text"; text: string }
+  | { type: "image"; mediaType: string; data: string };
+
 export interface StructuredCompletionRequest {
   model: string;
   systemPrompt: string;
-  userMessage: string;
+  userMessage: string | MessageContentPart[];
   temperature: number;
   maxTokens: number;
 }
@@ -47,7 +56,7 @@ export class AnthropicProvider implements LLMProvider {
             cache_control: { type: "ephemeral" },
           },
         ],
-        messages: [{ role: "user", content: req.userMessage }],
+        messages: [{ role: "user", content: toAnthropicContent(req.userMessage) }],
       });
     } catch (cause) {
       return { ok: false, error: classifyError(cause) };
@@ -74,6 +83,28 @@ export class AnthropicProvider implements LLMProvider {
       return { ok: false, error: { kind: "malformed_response", cause } };
     }
   }
+}
+
+// Translates the provider-agnostic MessageContentPart shape into Anthropic's
+// own content-block format — the one place that conversion happens, so
+// MessageContentPart itself stays free of any Anthropic-specific type.
+function toAnthropicContent(
+  userMessage: StructuredCompletionRequest["userMessage"]
+): string | Array<{ type: "text"; text: string } | { type: "image"; source: Base64ImageSource }> {
+  if (typeof userMessage === "string") return userMessage;
+
+  return userMessage.map((part) =>
+    part.type === "text"
+      ? { type: "text" as const, text: part.text }
+      : {
+          type: "image" as const,
+          source: {
+            type: "base64" as const,
+            media_type: part.mediaType as Base64ImageSource["media_type"],
+            data: part.data,
+          },
+        }
+  );
 }
 
 // Without output_config.format (dropped — see structure.ts for why), the

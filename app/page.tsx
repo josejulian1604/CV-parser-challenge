@@ -5,12 +5,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { classifyDocument } from "@/lib/extraction/adapters/classify";
 import { parseDocx } from "@/lib/extraction/adapters/docx";
 import { parsePdf } from "@/lib/extraction/adapters/pdf";
+import { renderScannedPdfToImages, compressImageFile } from "@/lib/extraction/adapters/image";
 import { truncateToPageLimit } from "@/lib/extraction/limits";
 import { MAX_PAGES } from "@/lib/config/limits";
 import type { NormalizedResumeData } from "@/lib/extraction/schema/normalized";
 import { useResumeData } from "./resume-data-context";
 import { UnsupportedFileType } from "@/components/error-states/unsupported-file-type";
-import { NotYetSupported } from "@/components/error-states/not-yet-supported";
 import { CorruptFile } from "@/components/error-states/corrupt-file";
 import {
   ProviderUnavailable,
@@ -22,7 +22,6 @@ type Status = "idle" | "loading" | "success" | "error";
 
 type ErrorState =
   | { case: "unsupported-file-type" }
-  | { case: "not-yet-supported"; route: "pdf-scanned" | "image" }
   | { case: "corrupt-file" }
   | { case: "provider-unavailable"; kind: ProviderUnavailableKind; retryAfterMs?: number | null }
   | { case: "repair-failed" };
@@ -89,6 +88,31 @@ function HomeContent() {
     clear();
   }
 
+  // Shared by both the text and vision paths — POSTs whichever body shape
+  // /api/extract accepts, and applies the same success/error handling.
+  async function submitExtraction(body: { text: string } | { images: unknown }, truncated: boolean) {
+    try {
+      const res = await fetch("/api/extract", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const responseBody = await res.json();
+        setErrorState(serverErrorState(responseBody.error));
+        setStatus("error");
+        return;
+      }
+      const data: NormalizedResumeData = await res.json();
+      setStatus("success");
+      setResumeData(data, truncated);
+      router.push("/result");
+    } catch {
+      setErrorState({ case: "provider-unavailable", kind: "network_error" });
+      setStatus("error");
+    }
+  }
+
   async function runExtraction(fileToProcess: File) {
     setStatus("loading");
     setErrorState(null);
@@ -97,8 +121,6 @@ function HomeContent() {
     if (!classified.ok) {
       if (classified.error.kind === "unrecognized_file_type") {
         setErrorState({ case: "unsupported-file-type" });
-      } else if (classified.error.kind === "route_not_implemented") {
-        setErrorState({ case: "not-yet-supported", route: classified.error.route });
       } else {
         // pdf_load_failed, surfaced while classify itself loads the PDF to count pages.
         setErrorState({ case: "corrupt-file" });
@@ -108,6 +130,34 @@ function HomeContent() {
     }
 
     const { route, file: classifiedFile } = classified.value;
+
+    // pdf-scanned/image have no text layer to extract — they go through the
+    // vision path instead (image.ts render/compress → /api/extract's
+    // `images` body), same system-prompt rules, no grounding either way
+    // (docs/architecture.md: "Known limitation: scanned CVs have no visual
+    // highlight" — by design, not a gap this route fills).
+    if (route === "pdf-scanned") {
+      const rendered = await renderScannedPdfToImages(classifiedFile, MAX_PAGES);
+      if (!rendered.ok) {
+        setErrorState({ case: "corrupt-file" });
+        setStatus("error");
+        return;
+      }
+      await submitExtraction({ images: rendered.value }, false);
+      return;
+    }
+
+    if (route === "image") {
+      const compressed = await compressImageFile(classifiedFile);
+      if (!compressed.ok) {
+        setErrorState({ case: "corrupt-file" });
+        setStatus("error");
+        return;
+      }
+      await submitExtraction({ images: [compressed.value] }, false);
+      return;
+    }
+
     const parsed =
       route === "docx" ? await parseDocx(classifiedFile) : await parsePdf(classifiedFile);
     if (!parsed.ok) {
@@ -117,27 +167,7 @@ function HomeContent() {
     }
 
     const { text, truncated: wasTruncated } = truncateToPageLimit(parsed.value, MAX_PAGES);
-
-    try {
-      const res = await fetch("/api/extract", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
-      });
-      if (!res.ok) {
-        const body = await res.json();
-        setErrorState(serverErrorState(body.error));
-        setStatus("error");
-        return;
-      }
-      const data: NormalizedResumeData = await res.json();
-      setStatus("success");
-      setResumeData(data, wasTruncated);
-      router.push("/result");
-    } catch {
-      setErrorState({ case: "provider-unavailable", kind: "network_error" });
-      setStatus("error");
-    }
+    await submitExtraction({ text }, wasTruncated);
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -162,8 +192,14 @@ function HomeContent() {
 
         <form onSubmit={handleSubmit}>
           <div className="rounded-lg border border-dashed border-line p-10 text-center">
-            <input type="file" accept=".pdf,application/pdf,.docx" onChange={handleFileChange} />
-            <p className="mt-3 font-body text-xs text-muted">PDF or Word, up to 3 pages</p>
+            <input
+              type="file"
+              accept=".pdf,application/pdf,.docx,image/*"
+              onChange={handleFileChange}
+            />
+            <p className="mt-3 font-body text-xs text-muted">
+              PDF, Word, or a photo/scan — up to 3 pages
+            </p>
           </div>
 
           <button
@@ -189,8 +225,6 @@ function ErrorDisplay({ state, onRetry }: { state: ErrorState; onRetry: () => vo
   switch (state.case) {
     case "unsupported-file-type":
       return <UnsupportedFileType />;
-    case "not-yet-supported":
-      return <NotYetSupported route={state.route} />;
     case "corrupt-file":
       return <CorruptFile />;
     case "provider-unavailable":

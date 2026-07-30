@@ -2,7 +2,7 @@ import { z } from "zod";
 import type { Result } from "../result";
 import { ResumeDataSchema } from "../schema/resume";
 import { CURRENT_SYSTEM_PROMPT } from "./prompt";
-import type { LLMProvider, ProviderError } from "./provider";
+import type { LLMProvider, MessageContentPart, ProviderError } from "./provider";
 
 export type StructureError = ProviderError;
 
@@ -25,14 +25,18 @@ Return ONLY a single valid JSON object matching this JSON Schema exactly — no 
 
 ${JSON.stringify(RESUME_JSON_SCHEMA)}`;
 
+// content is either the reconstructed source text (text-based routes) or
+// page/photo images (pdf-scanned, image routes) — same prompt rules apply
+// either way (null over invention, bilingual detection, etc.), so this is
+// one adapted call, not a parallel text-vs-vision implementation.
 export async function structureResume(
   provider: LLMProvider,
-  sourceText: string
+  content: string | MessageContentPart[]
 ): Promise<Result<unknown, StructureError>> {
   return provider.structuredComplete({
     model: HAIKU_MODEL,
     systemPrompt: FULL_SYSTEM_PROMPT,
-    userMessage: sourceText,
+    userMessage: content,
     temperature: 0,
     maxTokens: MAX_TOKENS,
   });

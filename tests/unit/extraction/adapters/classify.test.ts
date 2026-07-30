@@ -33,12 +33,24 @@ describe("classifyDocument", () => {
     }
   });
 
-  it("returns route_not_implemented for an image file", async () => {
+  it("routes an image file to the image route", async () => {
     const file = new File(["dummy"], "resume.png", { type: "image/png" });
     const result = await classifyDocument(file);
-    expect(result.ok).toBe(false);
-    if (!result.ok) {
-      expect(result.error).toEqual({ kind: "route_not_implemented", route: "image" });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value.route).toBe("image");
+    }
+  });
+
+  it("routes a scanned (no-text-layer) PDF to the pdf-scanned route", async () => {
+    const bytes = readFileSync(
+      join(__dirname, "..", "..", "..", "fixtures", "pdf-scanned", "sample-1.pdfScanned.pdf")
+    );
+    const file = new File([bytes], "sample-1.pdfScanned.pdf", { type: "application/pdf" });
+    const result = await classifyDocument(file);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value.route).toBe("pdf-scanned");
     }
   });
 

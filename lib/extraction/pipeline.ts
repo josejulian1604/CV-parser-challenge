@@ -2,7 +2,7 @@ import type { Result } from "./result";
 import { normalizeContact } from "./normalize/contact";
 import { normalizeDateRange, sortExperienceByRecency } from "./normalize/dates";
 import { normalizeSkills } from "./normalize/skills";
-import { AnthropicProvider, type LLMProvider } from "./structure/provider";
+import { AnthropicProvider, type LLMProvider, type MessageContentPart } from "./structure/provider";
 import { structureResume, type StructureError } from "./structure/structure";
 import { validateAndRepair, type RepairError } from "./validation/repair";
 import type { ResumeData } from "./schema/resume";
@@ -36,10 +36,10 @@ function normalizeResume(data: ResumeData): NormalizedResumeData {
 // validation/repair (stage 5). The upload UI (task 1.5) calls classify/
 // parsePdf directly client-side and POSTs the resulting text here.
 export async function runServerPipeline(
-  sourceText: string,
+  content: string | MessageContentPart[],
   provider: LLMProvider = new AnthropicProvider()
 ): Promise<Result<NormalizedResumeData, StructureError | RepairError>> {
-  const structured = await structureResume(provider, sourceText);
+  const structured = await structureResume(provider, content);
   if (!structured.ok) return structured;
 
   const repaired = await validateAndRepair(provider, structured.value);
