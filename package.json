@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",
+    "html2canvas": "^1.4.1",
     "mammoth": "^1.12.0",
     "next": "15.5.22",
     "pdfjs-dist": "^6.2.108",

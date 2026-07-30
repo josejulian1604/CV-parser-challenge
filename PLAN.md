@@ -37,14 +37,16 @@ Everything else in this phase is explicitly deferred — see "Deferred
 scope" below, which doubles as README "known limitations" content.
 
 - [x] 3.1 Image/scanned adapter (vision, no grounding — per decision)
-      — in progress
-- [ ] 3.5 Review/edit flow for extracted fields
-- [ ] 3.8 (NEW) PNG export as a second download format, alongside the
+- [ ] 3.8 PNG export as a second download format, alongside the
       existing print-ready PDF — per the "Resolved decisions" section
       below, this was already flagged as an optional secondary path;
       now confirmed in scope.
-> Checkpoint: the two features above work end-to-end; PNG export
-> available alongside PDF.
+> Checkpoint: PNG export available alongside PDF.
+
+### Deferred scope (time constraint — not started)
+- **3.5 Review/edit flow for extracted fields** — cut from scope
+  given the deadline. No way to correct a misread field short of
+  re-uploading; if extraction gets something wrong, it ships wrong.
 
 ### Deferred scope (time constraint — not started)
 - **3.2 EN/ES heuristic fallback (Stage 9)** — the LLM-based language
